@@ -127,7 +127,9 @@ export function SignupForm({
               src="/signup.png"
               alt=""
               fill
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              priority
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
         </CardContent>
