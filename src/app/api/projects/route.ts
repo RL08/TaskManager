@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/src/lib/auth/auth";
-import { getProjectsByUser, createProject } from "@/src/lib/models/projects";
+import { getProjectsByUser, createProject } from "@/src/features/project/lib/projectModel";
 
 export async function GET() {
   const session = await getSession();

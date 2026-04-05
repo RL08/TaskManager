@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import projectsReducer from "@/src/stores/projectsSlice"
+import projectsReducer from "@/src/features/project/lib/projectsSlice"
 
 export const makeStore = () => {
   return configureStore({
