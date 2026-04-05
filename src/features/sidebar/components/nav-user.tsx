@@ -1,4 +1,4 @@
-import UserDropdownContent from "@/src/components/nav-user-dropdown-content";
+import UserDropdownContent from "@/src/features/sidebar/components/nav-user-dropdown-content";
 import {
   Avatar,
   AvatarFallback,

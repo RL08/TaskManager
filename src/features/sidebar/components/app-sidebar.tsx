@@ -1,13 +1,13 @@
 import * as React from "react";
 import { NavProjects } from "@/src/features/project/components/nav-projects";
-import { NavUser } from "@/src/components/nav-user";
+import { NavUser } from "@/src/features/sidebar/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarRail,
 } from "@/src/components/ui/sidebar";
-import { getSession } from "@/src/features/auth/lib/auth";
+import { getSession } from "@/src/lib/auth/auth";
 
 export async function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const session = await getSession();
