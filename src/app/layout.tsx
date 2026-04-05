@@ -1,19 +1,18 @@
-import type { Metadata } from "next";
 import "./globals.css";
-
-export const metadata: Metadata = {
-  title: "Task Manager",
-  description:
-    "Task Manager is a web app designed to help you organize and manage your tasks efficiently.",
-};
+import { cn } from "@/src/lib/utils";
+import { Roboto } from "next/font/google";
+const roboto = Roboto({ subsets: ["latin"], variable: "--font-sans" });
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html
+      lang="en"
+      className={cn("h-full antialiased", "font-sans", roboto.variable)}
+    >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -1,6 +1,6 @@
-import { betterAuth, reddit } from "better-auth";
+import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import clientPromise from "@/src/lib/mongodb"; // your mongodb client
+import clientPromise from "@/src/lib/mongodb";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
