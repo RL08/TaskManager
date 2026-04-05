@@ -1,6 +1,6 @@
 "use client";
 
-import SignOutMenuItem from "@/src/components/nav-user-signout-item";
+import SignOutMenuItem from "@/src/features/auth/components/nav-user-signout-item";
 import {
   Avatar,
   AvatarFallback,
