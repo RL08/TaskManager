@@ -1,5 +1,5 @@
 import clientPromise from "@/src/lib/mongodb";
-import { ProjectDocument } from "@/src/features/project/types/model";
+import { ProjectDocument } from "@/src/types/api";
 import { ObjectId } from "mongodb";
 
 async function getCollection() {

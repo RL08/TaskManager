@@ -1,3 +1,5 @@
-export default function Home() {
-  return <main> This is a Home Page </main>;
+import KanbanBoard from "@/src/features/task/components/kanban-board";
+
+export default function HomePage() {
+  return <KanbanBoard />;
 }
