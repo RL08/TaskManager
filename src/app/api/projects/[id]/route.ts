@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/src/lib/auth/auth";
-import { renameProject, deleteProject } from "@/src/features/project/lib/project-model";
+import { renameProject, deleteProject } from "@/src/features/project/services/project-service";
 
 export async function PATCH(
   req: Request,
