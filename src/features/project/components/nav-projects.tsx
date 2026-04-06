@@ -8,7 +8,7 @@ import {
   renameProject,
   deleteProject,
   selectProject,
-} from "@/src/features/project/lib/projectsSlice";
+} from "@/src/features/project/lib/project-slice";
 
 import {
   SidebarGroup,
