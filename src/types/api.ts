@@ -27,3 +27,7 @@ export type ProjectsState = {
   selectedProjectId: string | null;
   loading: boolean;
 };
+
+export type TasksState = {
+  [projectId: string]: Task[];
+};
