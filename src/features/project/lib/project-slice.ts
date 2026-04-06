@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Project, ProjectsState } from "@/src/features/project/types/model";
+import { Project, ProjectsState } from "@/src/types/model";
+import { addTask } from "@/src/features/task/lib/task-slice";
 
 export const fetchProjects = createAsyncThunk("projects/fetchAll", async () => {
   const res = await fetch("/api/projects");
@@ -49,12 +50,12 @@ const projectsSlice = createSlice({
   initialState,
   reducers: {
     selectProject(state, action: PayloadAction<string>) {
-      state.selectedProjectId = state.selectedProjectId === action.payload ? null : action.payload;
+      state.selectedProjectId =
+        state.selectedProjectId === action.payload ? null : action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      // fetch
       .addCase(fetchProjects.pending, (state) => {
         state.loading = true;
       })
@@ -62,21 +63,25 @@ const projectsSlice = createSlice({
         state.items = action.payload;
         state.loading = false;
       })
-      // add
       .addCase(addProject.fulfilled, (state, action) => {
         state.items.push(action.payload);
         state.selectedProjectId = action.payload.id;
       })
-      // rename
       .addCase(renameProject.fulfilled, (state, action) => {
         const project = state.items.find((p) => p.id === action.payload.id);
         if (project) project.name = action.payload.name;
       })
-      // delete
       .addCase(deleteProject.fulfilled, (state, action) => {
         state.items = state.items.filter((p) => p.id !== action.payload);
         if (state.selectedProjectId === action.payload)
           state.selectedProjectId = null;
+      })
+      // cross-slice: listen to task action, update project's task list
+      .addCase(addTask.fulfilled, (state, action) => {
+        const project = state.items.find(
+          (p) => p.id === action.payload.projectId,
+        );
+        if (project) project.tasks.push(action.payload.task);
       });
   },
 });
