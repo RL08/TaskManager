@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Project, ProjectsState } from "@/src/types/model";
-import { addTask } from "@/src/features/task/lib/task-slice";
+import { Project, ProjectsState } from "@/src/types/api";
+import {
+  addTask,
+  renameTask,
+  updateTaskStatus,
+  deleteTask,
+} from "@/src/features/task/lib/task-slice";
 
 export const fetchProjects = createAsyncThunk("projects/fetchAll", async () => {
   const res = await fetch("/api/projects");
@@ -76,12 +81,24 @@ const projectsSlice = createSlice({
         if (state.selectedProjectId === action.payload)
           state.selectedProjectId = null;
       })
-      // cross-slice: listen to task action, update project's task list
+      // task cross-slice listeners
       .addCase(addTask.fulfilled, (state, action) => {
-        const project = state.items.find(
-          (p) => p.id === action.payload.projectId,
-        );
-        if (project) project.tasks.push(action.payload.task);
+        const p = state.items.find((p) => p.id === action.payload.projectId);
+        if (p) p.tasks.push(action.payload.task);
+      })
+      .addCase(renameTask.fulfilled, (state, action) => {
+        const p = state.items.find((p) => p.id === action.payload.projectId);
+        const t = p?.tasks.find((t) => t.id === action.payload.taskId);
+        if (t) t.title = action.payload.title;
+      })
+      .addCase(updateTaskStatus.fulfilled, (state, action) => {
+        const p = state.items.find((p) => p.id === action.payload.projectId);
+        const t = p?.tasks.find((t) => t.id === action.payload.taskId);
+        if (t) t.status = action.payload.status;
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        const p = state.items.find((p) => p.id === action.payload.projectId);
+        if (p) p.tasks = p.tasks.filter((t) => t.id !== action.payload.taskId);
       });
   },
 });
