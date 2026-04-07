@@ -43,6 +43,7 @@ export function LoginForm({
         setError(result.error.message ?? "Failed to sign in");
       } else {
         router.push("/");
+        router.refresh();
       }
     } catch {
       setError("An unexpected error occurred");
