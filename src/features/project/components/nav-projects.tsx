@@ -15,177 +15,104 @@ import {
   SidebarGroupAction,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/src/components/ui/sidebar";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/src/components/ui/dialog";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { FolderIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+
+import { PlusIcon } from "lucide-react";
+import { NavProjectDialog } from "./nav-project-dialog";
+import { NavProjectItem } from "./nav-project-item";
 
 export function NavProjects() {
   const dispatch = useAppDispatch();
+  const projects = useAppSelector((s) => s.projects.items);
+  const selectedProjectId = useAppSelector((s) => s.projects.selectedProjectId);
+  const loading = useAppSelector((s) => s.projects.loading);
 
-  // ✅ Redux state
-  const projects = useAppSelector((state) => state.projects.items);
-  const selectedProjectId = useAppSelector(
-    (state) => state.projects.selectedProjectId
-  );
-  const loading = useAppSelector((state) => state.projects.loading);
-
-  // ✅ Fetch on mount
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
 
-  // Create dialog
-  const [createOpen, setCreateOpen] = useState(false);
-  const [createName, setCreateName] = useState("");
+  // Dialog state
+  const [dialog, setDialog] = useState<{
+    type: "create" | "rename" | null;
+    projectId?: string;
+    name: string;
+  }>({ type: null, name: "" });
 
-  // Rename dialog
-  const [renameOpen, setRenameOpen] = useState(false);
-  const [renameId, setRenameId] = useState<string | null>(null);
-  const [renameName, setRenameName] = useState("");
+  // Handlers
+  const handleOpenCreate = () => {
+    setDialog({ type: "create", name: "" });
+  };
 
-  function handleCreate() {
-    if (!createName.trim()) return;
-    dispatch(addProject(createName.trim()));
-    setCreateName("");
-    setCreateOpen(false);
-  }
+  const handleOpenRename = (id: string, name: string) => {
+    setDialog({ type: "rename", projectId: id, name });
+  };
 
-  function openRename(id: string, currentName: string) {
-    setRenameId(id);
-    setRenameName(currentName);
-    setRenameOpen(true);
-  }
+  const handleCloseDialog = () => {
+    setDialog({ type: null, name: "" });
+  };
 
-  function handleRename() {
-    if (!renameId || !renameName.trim()) return;
-    dispatch(renameProject({ id: renameId, name: renameName.trim() }));
-    setRenameOpen(false);
-  }
+  const handleSaveProject = () => {
+    const name = dialog.name.trim();
+    if (!name) return;
+
+    if (dialog.type === "create") {
+      dispatch(addProject(name));
+    }
+
+    if (dialog.type === "rename" && dialog.projectId) {
+      dispatch(renameProject({ id: dialog.projectId, name }));
+    }
+
+    handleCloseDialog();
+  };
+
+  const handleSelectProject = (id: string) => {
+    dispatch(selectProject(id));
+  };
+
+  const handleDeleteProject = (id: string) => {
+    dispatch(deleteProject(id));
+  };
 
   return (
     <>
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
         <SidebarGroupLabel>Projects</SidebarGroupLabel>
-
-        <SidebarGroupAction
-          title="Create Project"
-          onClick={() => setCreateOpen(true)}
-        >
+        <SidebarGroupAction title="Create Project" onClick={handleOpenCreate}>
           <PlusIcon />
-          <span className="sr-only">Create Project</span>
         </SidebarGroupAction>
-
         <SidebarMenu>
           {loading && (
             <p className="px-2 py-1 text-xs text-muted-foreground animate-pulse">
               Loading projects...
             </p>
           )}
-
-          {projects.length === 0 && !loading && (
+          {!loading && projects.length === 0 && (
             <p className="px-2 py-1 text-xs text-muted-foreground">
               No projects yet — hit + to create one.
             </p>
           )}
-
           {projects.map((project) => (
-            <SidebarMenuItem key={project.id}>
-              <SidebarMenuButton
-                isActive={selectedProjectId === project.id}
-                onClick={() => dispatch(selectProject(project.id))}
-                className="cursor-pointer pr-16"
-              >
-                <FolderIcon />
-                <span className="truncate">{project.name}</span>
-              </SidebarMenuButton>
-
-              <div className="absolute right-1 top-1/2 -translate-y-1/2 hidden items-center gap-0.5 group-hover/menu-item:flex">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openRename(project.id, project.name);
-                  }}
-                >
-                  <PencilIcon size={13} />
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(deleteProject(project.id));
-                  }}
-                >
-                  <Trash2Icon size={13} />
-                </Button>
-              </div>
-            </SidebarMenuItem>
+            <NavProjectItem
+              key={project.id}
+              id={project.id}
+              name={project.name}
+              isActive={selectedProjectId === project.id}
+              onSelect={handleSelectProject}
+              onRename={handleOpenRename}
+              onDelete={handleDeleteProject}
+            />
           ))}
         </SidebarMenu>
       </SidebarGroup>
 
-      {/* Create dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Create Project</DialogTitle>
-          </DialogHeader>
-          <Input
-            placeholder="Project name"
-            value={createName}
-            autoFocus
-            onChange={(e) => setCreateName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleCreate} disabled={!createName.trim()}>
-              Create
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Rename dialog */}
-      <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Rename Project</DialogTitle>
-          </DialogHeader>
-          <Input
-            placeholder="New name"
-            value={renameName}
-            autoFocus
-            onChange={(e) => setRenameName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleRename()}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRenameOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleRename} disabled={!renameName.trim()}>
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <NavProjectDialog
+        type={dialog.type}
+        name={dialog.name}
+        onNameChange={(name) => setDialog({ ...dialog, name })}
+        onClose={handleCloseDialog}
+        onSave={handleSaveProject}
+      />
     </>
   );
 }
