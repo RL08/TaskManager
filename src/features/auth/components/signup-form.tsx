@@ -45,6 +45,7 @@ export function SignupForm({
         setError(result.error.message ?? "Failed to sign up");
       } else {
         router.push("/");
+        router.refresh();
       }
     } catch {
       setError("An unexpected error occurred");
