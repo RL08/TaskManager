@@ -4,7 +4,7 @@ Task Manager is a modern task management web application designed to help users 
 
 ## Tech Stack
 
-- **Framework:** Next.js (App Router)
+- **Framework:** Next.js
 - **Styling:** Tailwind CSS
 - **State Management:** Redux Toolkit
 - **Database:** MongoDB + Mongoose
@@ -39,6 +39,8 @@ Create a `.env.local` file:
 ```env
 MONGODB_URI=your_mongodb_connection_string
 BETTER_AUTH_SECRET=your_secret
+BETTER_AUTH_URL=http://localhost:3000 # Base URL of your app
+NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000 # Base URL of your app
 ```
 
 ### 4. Run the development server
