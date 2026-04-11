@@ -19,20 +19,28 @@ Before getting started, make sure you have the following installed:
 
 ## Getting Started
 
-### 1. Clone the repository
+### Option 1: Use the live version
+
+```bash
+https://task-manager-9g3s.vercel.app
+```
+
+### Option 2: Run locally
+
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/RL08/TaskManager.git
 cd task-manager
 ```
 
-### 2. Install dependencies
+#### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Setup environment variables
+#### 3. Setup environment variables
 
 Create a `.env.local` file:
 
@@ -43,7 +51,7 @@ BETTER_AUTH_URL=http://localhost:3000 # Base URL of your app
 NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000 # Base URL of your app
 ```
 
-### 4. Run the development server
+#### 4. Run the development server
 
 ```bash
 npm run dev
